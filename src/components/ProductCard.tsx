@@ -2,7 +2,7 @@
 
 import { Card, CardContent } from "./ui/card";
 import { Button } from "./ui/button";
-import { ImageWithFallback } from "./figma/ImageWithFallback";
+import Image from "next/image";
 import { motion } from "motion/react";
 import { useState } from "react";
 import { Product } from "./products_data/types";
@@ -36,10 +36,18 @@ export function ProductCard({
   };
 
   const handleBuyNowClick = () => {
-    const price = selectedSize === '30ml' ? product["Price (30ml)"] : product["Price (50ml)"];
+    const is30ml = selectedSize === '30ml';
+    const originalPrice = is30ml ? product["Price (30ml)"] : product["Price (50ml)"];
+    const discountedPrice = is30ml ? product["Discounted Price (30ml)"] : product["Discounted Price (50ml)"];
+    const finalPrice = discountedPrice || originalPrice;
+    
+    let priceString = `*Price:* ${finalPrice}`;
+    if (discountedPrice) {
+      priceString = `*Price:* ~${originalPrice}~ ${finalPrice}`;
+    }
     
     // Create WhatsApp message with product details
-    const whatsappMessage = `Assalam-o-Alaikum! I'm interested in purchasing from ${STORE_NAME}:\n\n🛍️ *Product:* ${product.name}\n📝 *Description:* ${product.description}\n💰 *Price:* ${price}\n📏 *Size:* ${selectedSize}\n🏷️ *Category:* ${product.category}\n\nI would like to know more details about this product:\n• Is it available in stock?\n• What are the delivery options?\n• Any discounts or offers available?\n• What is the return/exchange policy?\n\nPlease provide more information so I can proceed with the purchase. Thank you!`;
+    const whatsappMessage = `Assalam-o-Alaikum! I'm interested in purchasing from ${STORE_NAME}:\n\n🛍️ *Product:* ${product.name}\n📝 *Description:* ${product.description}\n💰 ${priceString}\n📏 *Size:* ${selectedSize}\n🏷️ *Category:* ${product.category}\n\nI would like to know more details about this product:\n• Is it available in stock?\n• What are the delivery options?\n• Any discounts or offers available?\n• What is the return/exchange policy?\n\nPlease provide more information so I can proceed with the purchase. Thank you!`;
     
     // URL encode the message
     const encodedMessage = encodeURIComponent(whatsappMessage);
@@ -85,7 +93,7 @@ export function ProductCard({
 
           {/* Product Image with sparkle effects */}
           <motion.div
-            className="relative mb-6"
+            className="relative mb-6 h-48"
             whileHover={{
               rotateY: 10,
               scale: 1.05,
@@ -93,10 +101,12 @@ export function ProductCard({
             transition={{ duration: 0.4 }}
           >
             <div className="absolute inset-0 bg-gradient-to-t from-metallic-gold/10 to-transparent rounded-lg"></div>
-            <ImageWithFallback
+            <Image
               src={product.image}
               alt={product.name}
-              className="w-full h-48 object-cover rounded-lg"
+              fill
+              className="object-cover rounded-lg"
+              priority={index < 4}
             />
             {/* Soft glow around image */}
             <motion.div
@@ -170,7 +180,7 @@ export function ProductCard({
 
           {/* Description - Slide up animation */}
           <motion.p
-            className="text-sm text-ivory-white/80 min-h-[2.5rem] leading-relaxed "
+            className="text-sm text-ivory-white/80 h-[3.5rem] leading-relaxed "
             style={{
               fontFamily: "'Poppins', sans-serif",
               fontWeight: "300",
@@ -221,7 +231,7 @@ export function ProductCard({
             transition={{ duration: 0.3, delay: 0.2 }}
           >
             <motion.div
-              className="bg-gradient-to-r from-metallic-gold/20 to-metallic-gold/10 border border-metallic-gold/50 rounded-lg px-4 py-2"
+              className="bg-gradient-to-r from-metallic-gold/20 to-metallic-gold/10 border border-metallic-gold/50 rounded-lg px-4 py-2 min-h-[4.5rem] flex items-center justify-center"
               whileHover={{
                 borderColor: "rgba(212, 175, 55, 0.8)",
                 boxShadow: "0 0 15px rgba(212, 175, 55, 0.3)",
@@ -230,37 +240,48 @@ export function ProductCard({
             >
               {showDualPrice ? (
                 // Products page - show both prices
-                <div className="space-y-1">
-                  <p
-                    className="text-sm text-metallic-gold"
-                    style={{
-                      fontFamily: "'Poppins', sans-serif",
-                      fontWeight: "400",
-                    }}
-                  >
-                    {product["Price (30ml)"]}
-                  </p>
-                  <p
-                    className="text-sm text-metallic-gold"
-                    style={{
-                      fontFamily: "'Poppins', sans-serif",
-                      fontWeight: "400",
-                    }}
-                  >
-                    {product["Price (50ml)"]}
-                  </p>
+                <div className="space-y-2">
+                  {/* 30ml price */}
+                  <div className="flex justify-center items-baseline gap-2">
+                    {product["Discounted Price (30ml)"] ? (
+                      <>
+                        <span className="text-sm text-metallic-gold/60 line-through">{product["Price (30ml)"]}</span>
+                        <span className="text-base text-metallic-gold font-semibold">{product["Discounted Price (30ml)"]}</span>
+                      </>
+                    ) : (
+                      <span className="text-base text-metallic-gold">{product["Price (30ml)"]}</span>
+                    )}
+                  </div>
+                  {/* 50ml price */}
+                  <div className="flex justify-center items-baseline gap-2">
+                    {product["Discounted Price (50ml)"] ? (
+                      <>
+                        <span className="text-sm text-metallic-gold/60 line-through">{product["Price (50ml)"]}</span>
+                        <span className="text-base text-metallic-gold font-semibold">{product["Discounted Price (50ml)"]}</span>
+                      </>
+                    ) : (
+                      <span className="text-base text-metallic-gold">{product["Price (50ml)"]}</span>
+                    )}
+                  </div>
                 </div>
               ) : (
                 // Home page - show selected size price
-                <p
-                  className="text-xl text-metallic-gold"
-                  style={{
-                    fontFamily: "'Poppins', sans-serif",
-                    fontWeight: "600",
-                  }}
-                >
-                  {selectedSize === '30ml' ? product["Price (30ml)"] : product["Price (50ml)"]}
-                </p>
+                <div className="flex justify-center items-baseline gap-3">
+                  {(selectedSize === '30ml' && product["Discounted Price (30ml)"]) || (selectedSize === '50ml' && product["Discounted Price (50ml)"]) ? (
+                    <>
+                      <span className="text-lg text-metallic-gold/60 line-through">
+                        {selectedSize === '30ml' ? product["Price (30ml)"] : product["Price (50ml)"]}
+                      </span>
+                      <span className="text-2xl text-metallic-gold font-bold">
+                        {selectedSize === '30ml' ? product["Discounted Price (30ml)"] : product["Discounted Price (50ml)"]}
+                      </span>
+                    </>
+                  ) : (
+                    <span className="text-xl text-metallic-gold font-semibold">
+                      {selectedSize === '30ml' ? product["Price (30ml)"] : product["Price (50ml)"]}
+                    </span>
+                  )}
+                </div>
               )}
             </motion.div>
 

@@ -10,13 +10,20 @@ import Link from "next/link";
 
 
 export function ProductGrid() {
-  // Random 5 products select karna
-  const getRandomProducts = () => {
-    const shuffled = [...perfumes].sort(() => 0.5 - Math.random());
-    return shuffled.slice(0, 5);
+  // Specific products select karna
+  const getSpecificProducts = () => {
+    const specificNames = [
+      "Victory Pulse (CR7)",
+      "Silken Whisper (White Musk)",
+      "Midnight Steel (Dior Sauvage)",
+      "Scarlet Mirage (Baccarat Rouge 540)",
+      "Desert Brew (Khamra Qehwa)"
+    ];
+    
+    return perfumes.filter(product => specificNames.includes(product.name));
   };
 
-  const [displayedProducts] = useState(() => getRandomProducts());
+  const [displayedProducts] = useState(() => getSpecificProducts());
 
   // Add to cart handler
   const handleAddToCart = (product: Product, size: '30ml' | '50ml') => {

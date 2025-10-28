@@ -5,6 +5,7 @@ import perfumes from "@/components/products_data/products";
 import { useState } from "react";
 import { Product } from "@/components/products_data/types";
 import { ProductCard } from "@/components/ProductCard";
+import Link from "next/link";
 
 export default function ProductsPage() {
   const [selectedCategory, setSelectedCategory] = useState<string>('All');
@@ -223,6 +224,32 @@ export default function ProductsPage() {
               </p>
             </motion.div>
           )}
+        </div>
+      </motion.section>
+
+      {/* Back to Home Button */}
+      <motion.section
+        className="py-20 text-center bg-royal-black"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 1, delay: 0.6 }}
+      >
+        <div className="container mx-auto">
+          <Link href="/" passHref>
+            <motion.button
+              className="inline-block bg-gradient-to-r from-metallic-gold to-yellow-500 text-royal-black font-bold py-4 px-10 rounded-lg transition-all duration-300 transform hover:scale-105 hover:shadow-xl hover:shadow-metallic-gold/30 border-2 border-metallic-gold/50 hover:border-metallic-gold focus:outline-none focus:ring-4 focus:ring-metallic-gold/30"
+              style={{
+                fontFamily: "'Poppins', sans-serif",
+                fontWeight: "600",
+                textTransform: "uppercase",
+                letterSpacing: "0.05em",
+              }}
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+            >
+              Back to Home
+            </motion.button>
+          </Link>
         </div>
       </motion.section>
     </div>
