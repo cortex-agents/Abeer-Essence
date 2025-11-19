@@ -16,7 +16,7 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: "Abeer Essence | Luxury Perfumes & Fragrances",
-  description: "Discover the art of luxury perfumery with our exquisite collection of premium fragrances. Each bottle contains a unique story waiting to be told.",
+  description: "Art Of Luxury Perfumes",
 };
 
 export default function RootLayout({
